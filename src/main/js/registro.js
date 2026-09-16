@@ -55,22 +55,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 codigo
             );
 
-            const respuesta = await fetch(
-                `/api/productos/${encodeURIComponent(codigo)}`
-            );
-
-
-            const datos = await respuesta.json();
-
-
-            if (!respuesta.ok) {
-
-                throw new Error(
-                    datos.error ||
-                    "No se pudo obtener el producto"
+            let datos = null;
+            try {
+                const respuesta = await fetch(
+                    `/api/productos/${encodeURIComponent(codigo)}`
                 );
+                if (respuesta.ok) {
+                    datos = await respuesta.json();
+                } else {
+                    throw new Error("API no disponible");
+                }
+            } catch (errApi) {
+                // Fallback a LocalStorage para GitHub Pages y VS Code
+                const local = localStorage.getItem("inventario_productos");
+                if (local) {
+                    const lista = JSON.parse(local);
+                    datos = lista.find(
+                        p => String(p.codigo).toLowerCase() === String(codigo).toLowerCase()
+                    );
+                }
             }
 
+            if (!datos) {
+                throw new Error("Producto no encontrado.");
+            }
 
             console.log(
                 "Producto recibido:",
@@ -99,17 +107,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             // ==========================================
-            // BLOQUEAR CÓDIGO EN EDICIÓN
+            // BLOQUEAR CÓDIGO EN EDICIÓN Y AJUSTAR UI
             // ==========================================
 
             campoCodigo.readOnly = true;
 
+            const avisoCodigo = document.getElementById("avisoCodigoEdicion");
+            if (avisoCodigo) avisoCodigo.style.display = "block";
+
+            const btnCancelar = document.getElementById("btnCancelarEdicion");
+            if (btnCancelar) btnCancelar.style.display = "inline-flex";
+
+            const tituloPag = document.getElementById("tituloPaginaRegistro");
+            if (tituloPag) tituloPag.textContent = "Editar Producto";
+
+            const descPag = document.getElementById("descPaginaRegistro");
+            if (descPag) descPag.textContent = "Modifica los datos del producto seleccionado.";
 
             // Cambiar texto del botón
             if (botonGuardar) {
-
                 botonGuardar.innerHTML =
-                    "Guardar cambios";
+                    '<i class="bi bi-check-lg me-1"></i>Guardar cambios';
             }
 
 
@@ -121,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             alert(
+                error.message ||
                 "No se pudo cargar el producto."
             );
         }
@@ -226,109 +245,73 @@ document.addEventListener("DOMContentLoaded", () => {
             // DECIDIR POST O PUT
             // ==========================================
 
-            const url = modoEdicion
-
-                ? `/api/productos/${encodeURIComponent(
-                    producto.codigo
-                )}`
-
-                : "/api/productos";
-
-
-            const metodo =
-                modoEdicion
-                    ? "PUT"
-                    : "POST";
-
-
             // ==========================================
-            // ENVIAR AL SERVIDOR
+            // GUARDAR / ACTUALIZAR
             // ==========================================
 
             try {
 
-                console.log(
-                    `${metodo} ${url}`,
-                    producto
-                );
+                let guardadoEnApi = false;
 
+                try {
+                    const url = modoEdicion
+                        ? `/api/productos/${encodeURIComponent(producto.codigo)}`
+                        : "/api/productos";
+                    const metodo = modoEdicion ? "PUT" : "POST";
 
-                const respuesta = await fetch(
-                    url,
-                    {
+                    const respuesta = await fetch(url, {
                         method: metodo,
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(producto)
+                    });
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(producto)
+                    if (respuesta.ok) {
+                        guardadoEnApi = true;
                     }
-                );
-
-
-                const datos =
-                    await respuesta.json()
-                        .catch(() => ({}));
-
-
-                // ======================================
-                // ERROR
-                // ======================================
-
-                if (!respuesta.ok) {
-
-                    console.error(
-                        "Error del servidor:",
-                        datos
-                    );
-
-                    alert(
-                        datos.error ||
-                        datos.mensaje ||
-                        "No se pudo guardar el producto."
-                    );
-
-                    return;
+                } catch (errApi) {
+                    // Si no hay API (ej. GitHub Pages o VS Code sin servidor), continúa a LocalStorage
                 }
 
-
-                // ======================================
-                // ÉXITO
-                // ======================================
-
-                console.log(
-                    "Respuesta:",
-                    datos
-                );
-
+                // Sincronizar / guardar siempre en LocalStorage
+                let lista = JSON.parse(localStorage.getItem("inventario_productos") || "[]");
+                if (modoEdicion) {
+                    const idx = lista.findIndex(
+                        p => String(p.codigo).toLowerCase() === String(producto.codigo).toLowerCase()
+                    );
+                    if (idx !== -1) {
+                        lista[idx] = { ...lista[idx], ...producto };
+                    }
+                } else {
+                    const existe = lista.some(
+                        p => String(p.codigo).toLowerCase() === String(producto.codigo).toLowerCase()
+                    );
+                    if (existe && !guardadoEnApi) {
+                        alert(`Ya existe un producto con el código "${producto.codigo}".`);
+                        return;
+                    }
+                    lista.unshift({ id: Date.now(), ...producto });
+                }
+                localStorage.setItem("inventario_productos", JSON.stringify(lista));
 
                 alert(
-                    datos.mensaje ||
-                    (
-                        modoEdicion
-                            ? "Producto actualizado correctamente."
-                            : "Producto registrado correctamente."
-                    )
+                    modoEdicion
+                        ? "Producto actualizado correctamente."
+                        : "Producto registrado correctamente."
                 );
 
-
-                // Volver a productos
-                window.location.href =
-                    "/productos";
-
+                // Volver a la lista de productos con ruta relativa
+                window.location.href = "./productos.html";
 
             } catch (error) {
 
                 console.error(
-                    "Error de conexión:",
+                    "Error al guardar:",
                     error
                 );
 
                 alert(
-                    "No se pudo conectar con el servidor."
+                    error.message ||
+                    "No se pudo guardar el producto."
                 );
             }
 

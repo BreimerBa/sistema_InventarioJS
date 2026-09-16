@@ -40,13 +40,26 @@ async function cargarProductosDesdeServidor() {
 
     try {
 
-        const respuesta = await fetch("/api/productos");
-
-        if (!respuesta.ok) {
-            throw new Error("Error al obtener los productos");
+        try {
+            const respuesta = await fetch("/api/productos");
+            if (respuesta.ok) {
+                productosMemoria = await respuesta.json();
+                localStorage.setItem("inventario_productos", JSON.stringify(productosMemoria));
+            } else {
+                throw new Error("API no disponible");
+            }
+        } catch (errApi) {
+            // Fallback a LocalStorage para GitHub Pages y VS Code
+            const local = localStorage.getItem("inventario_productos");
+            if (local) {
+                productosMemoria = JSON.parse(local);
+            } else {
+                productosMemoria = [
+                    { id: 1, codigo: "P001", nombre: "Teclado", categoria: "tecnologia", precio: 12000, cantidad: 5 }
+                ];
+                localStorage.setItem("inventario_productos", JSON.stringify(productosMemoria));
+            }
         }
-
-        productosMemoria = await respuesta.json();
 
         renderizarTabla(productosMemoria);
 
@@ -269,36 +282,27 @@ document.addEventListener("click", async function (evento) {
 
         try {
 
-            const respuesta = await fetch(
-                `/api/productos/${encodeURIComponent(codigo)}`,
-                {
-                    method: "DELETE"
+            try {
+                const respuesta = await fetch(
+                    `/api/productos/${encodeURIComponent(codigo)}`,
+                    { method: "DELETE" }
+                );
+                if (respuesta.ok) {
+                    const data = await respuesta.json().catch(() => ({}));
+                    alert(data.mensaje || "Producto eliminado correctamente.");
+                } else {
+                    throw new Error("API no disponible");
                 }
-            );
-
-
-            const data =
-                await respuesta.json()
-                    .catch(() => ({}));
-
-
-            if (respuesta.ok) {
-
-                alert(
-                    data.mensaje ||
-                    "Producto eliminado correctamente."
+            } catch (errApi) {
+                // Fallback a LocalStorage para GitHub Pages y VS Code
+                productosMemoria = productosMemoria.filter(
+                    p => String(p.codigo).toLowerCase() !== String(codigo).toLowerCase()
                 );
-
-                cargarProductosDesdeServidor();
-
-            } else {
-
-                alert(
-                    data.error ||
-                    data.mensaje ||
-                    "No se pudo eliminar el producto."
-                );
+                localStorage.setItem("inventario_productos", JSON.stringify(productosMemoria));
+                alert("Producto eliminado correctamente.");
             }
+
+            cargarProductosDesdeServidor();
 
         } catch (error) {
 
@@ -308,7 +312,8 @@ document.addEventListener("click", async function (evento) {
             );
 
             alert(
-                "Error de conexión al intentar eliminar el producto."
+                error.message ||
+                "Error al intentar eliminar el producto."
             );
         }
     }
@@ -325,7 +330,7 @@ document.addEventListener("click", async function (evento) {
 
 
         window.location.href =
-            `/registro?editar=${encodeURIComponent(codigo)}`;
+            `./registro.html?editar=${encodeURIComponent(codigo)}`;
     }
 
 });

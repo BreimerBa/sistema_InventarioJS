@@ -13,20 +13,28 @@ async function cargarEstadisticas() {
 
     try {
 
-        const respuesta = await fetch("/api/productos");
+        let productos = [];
 
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                "No se pudieron obtener los productos"
-            );
-
+        try {
+            const respuesta = await fetch("/api/productos");
+            if (respuesta.ok) {
+                productos = await respuesta.json();
+                localStorage.setItem("inventario_productos", JSON.stringify(productos));
+            } else {
+                throw new Error("API no disponible");
+            }
+        } catch (errApi) {
+            // Fallback a LocalStorage para GitHub Pages y VS Code
+            const local = localStorage.getItem("inventario_productos");
+            if (local) {
+                productos = JSON.parse(local);
+            } else {
+                productos = [
+                    { id: 1, codigo: "P001", nombre: "Teclado", categoria: "tecnologia", precio: 12000, cantidad: 5 }
+                ];
+                localStorage.setItem("inventario_productos", JSON.stringify(productos));
+            }
         }
-
-
-        const productos = await respuesta.json();
-
 
         console.log(
             "Productos recibidos:",
