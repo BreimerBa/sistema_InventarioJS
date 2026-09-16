@@ -18,6 +18,8 @@ Mi proyecto desarrollado como parte de mi proceso de aprendizaje.
 
 ## Base de datos
 
+*se necesita la abse de datos de mysql server, y mostrar la tabla como visor con mysql workbench
+
 1. Crear una base de datos MySQL.
 2. Importar el archivo `database/inventario_web.sql`.
 3. Configurar las credenciales de conexión en el archivo de configuración.
