@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Productos</title>
+
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/src/main/inventario/css/productos.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar-inventario">
+
+        <div class="nav-contenedor">
+
+            <a href="/index.html" class="marca">
+
+                <i class="bi bi-box-seam"></i>
+
+                <span>
+                    Tienda Inventarios
+                </span>
+
+            </a>
+
+            <div class="nav-enlaces">
+
+                <a href="/index.html">
+
+                    <i class="bi bi-house-door"></i>
+                    Inicio
+                </a>
+
+                <a href="/src/main/inventario/html/productos.html" class="activo">
+
+                    <i class="bi bi-box"></i>
+                    Productos
+                </a>
+
+                <a href="/src/main/inventario/html/registro.html">
+
+                    <i class="bi bi-plus-circle"></i>
+                    Registrar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="contenedor-principal">
+
+        <div class="encabezado-productos">
+
+            <div>
+                <span class="etiqueta">
+
+                    <i class="bi bi-box-seam"></i>
+                    INVENTARIO
+                </span>
+
+                <h1 class="titulo">
+                    Lista de Productos
+                </h1>
+
+                <p class="descripcion">
+                    Consulta y administra los productos registrados
+                    en tu inventario.
+                </p>
+
+            </div>
+
+            <a href="/src/main/inventario/html/registro.html" class="btn btn-primary boton-registrar">
+
+                <i class="bi bi-plus-lg me-2"></i>
+                Nuevo producto
+            </a>
+
+        </div>
+
+        <div class="resumen">
+
+            <div class="resumen-item">
+                <div class="resumen-icon icon-azul">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                    <span>
+                        Productos
+                    </span>
+                    <strong id="total-productos">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="resumen-item">
+
+                <div class="resumen-icon icon-verde">
+
+                    <i class="bi bi-check-circle"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Disponibles
+                    </span>
+
+                    <strong id="total-disponibles">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div class="resumen-item">
+                <div class="resumen-icon icon-rojo">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+
+                <div>
+                    <span>
+                        Agotados
+                    </span>
+                    <strong id="total-agotados">
+                        0
+                    </strong>
+                </div>
+            </div>
+
+        </div>
+
+        <section class="tabla-contenedor">
+            <div class="tabla-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h2>
+                        Productos registrados
+                    </h2>
+                    <p>
+                        Información actual del inventario
+                    </p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="input-group" style="max-width: 260px;">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" id="buscadorProductos" class="form-control"
+                            placeholder="Buscar por código o nombre...">
+                    </div>
+
+                    <select id="filtroCategoria" class="form-select" style="max-width: 190px;">
+                        <option value="">Todas las categorías</option>
+                        <option value="tecnologia">Tecnología</option>
+                        <option value="papeleria">Papelería</option>
+                        <option value="accesorios">Accesorios</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tabla-responsive">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>
+                                Código
+                            </th>
+                            <th>
+                                Producto
+                            </th>
+                            <th>
+                                Categoría
+                            </th>
+                            <th>
+                                Precio
+                            </th>
+                            <th>
+                                Cantidad
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaProductos">
+
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <strong>
+                                    <i class="bi bi-cash-stack me-2"></i>
+                                    Valor total del inventario
+                                </strong>
+                            </td>
+                            <td colspan="2">
+
+                                <strong id="valorTotalStock">
+                                    $0
+                                </strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+
+        <p class="mb-0">
+            <i class="bi bi-box-seam me-1"></i>
+            Sistema de Inventario
+            <br>
+            <small>
+                Tecnólogo en Análisis y Desarrollo de Software
+            </small>
+        </p>
+
+    </footer>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/src/main/js/app.js"></script>
+    <script src="/src/main/js/productos.js"></script>
+
+</body>
+
+</html>
