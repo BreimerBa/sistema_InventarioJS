@@ -4,11 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-// =====================================================
 // CARGAR ESTADÍSTICAS Y ÚLTIMOS PRODUCTOS
-// =====================================================
-
 async function cargarEstadisticas() {
 
     try {
@@ -24,7 +20,7 @@ async function cargarEstadisticas() {
                 throw new Error("API no disponible");
             }
         } catch (errApi) {
-            // Fallback a LocalStorage para GitHub Pages y VS Code
+
             const local = localStorage.getItem("inventario_productos");
             if (local) {
                 productos = JSON.parse(local);
@@ -41,19 +37,11 @@ async function cargarEstadisticas() {
             productos
         );
 
-
-        // =================================================
         // TOTAL DE PRODUCTOS
-        // =================================================
-
         const totalProductos =
             productos.length;
 
-
-        // =================================================
         // PRODUCTOS DISPONIBLES
-        // =================================================
-
         const disponibles =
             productos.filter(producto => {
 
@@ -61,11 +49,7 @@ async function cargarEstadisticas() {
 
             }).length;
 
-
-        // =================================================
         // PRODUCTOS AGOTADOS
-        // =================================================
-
         const agotados =
             productos.filter(producto => {
 
@@ -73,11 +57,7 @@ async function cargarEstadisticas() {
 
             }).length;
 
-
-        // =================================================
         // VALOR TOTAL DEL INVENTARIO
-        // =================================================
-
         const valorTotal =
             productos.reduce(
                 (total, producto) => {
@@ -94,73 +74,53 @@ async function cargarEstadisticas() {
                 0
             );
 
-
-        // =================================================
         // MOSTRAR ESTADÍSTICAS EN EL HTML
-        // =================================================
-
         const elementoTotal =
             document.getElementById(
                 "total-productos"
             );
-
 
         const elementoDisponibles =
             document.getElementById(
                 "total-disponibles"
             );
 
-
         const elementoAgotados =
             document.getElementById(
                 "total-agotados"
             );
-
 
         const elementoValor =
             document.getElementById(
                 "valorTotalStock"
             );
 
-
         if (elementoTotal) {
 
             elementoTotal.textContent =
                 totalProductos;
-
         }
-
 
         if (elementoDisponibles) {
 
             elementoDisponibles.textContent =
                 disponibles;
-
         }
-
 
         if (elementoAgotados) {
 
             elementoAgotados.textContent =
                 agotados;
-
         }
-
 
         if (elementoValor) {
 
             elementoValor.textContent =
                 `$${valorTotal.toLocaleString("es-CO")}`;
-
         }
 
-
-        // =================================================
         // MOSTRAR LOS ÚLTIMOS 3 PRODUCTOS
-        // =================================================
-
         mostrarUltimosProductos(productos);
-
 
     } catch (error) {
 
@@ -173,11 +133,7 @@ async function cargarEstadisticas() {
 
 }
 
-
-// =====================================================
 // MOSTRAR LOS ÚLTIMOS 3 PRODUCTOS
-// =====================================================
-
 function mostrarUltimosProductos(productos) {
 
     const contenedor =
@@ -185,20 +141,12 @@ function mostrarUltimosProductos(productos) {
             "ultimos-productos"
         );
 
-
-    // Si el contenedor no existe, no hacemos nada
-
     if (!contenedor) {
 
         return;
-
     }
 
-
-    // =================================================
     // SI NO HAY PRODUCTOS
-    // =================================================
-
     if (productos.length === 0) {
 
         contenedor.innerHTML = `
@@ -218,24 +166,15 @@ function mostrarUltimosProductos(productos) {
             </div>
 
         `;
-
         return;
-
     }
 
-
-    // =================================================
     // LOS PRIMEROS 3 SON LOS MÁS RECIENTES
-    // =================================================
-
     const ultimosProductos =
         productos.slice(0, 3);
 
 
-    // =================================================
     // CREAR LAS TARJETAS
-    // =================================================
-
     contenedor.innerHTML =
         ultimosProductos.map((producto) => {
 
@@ -244,7 +183,6 @@ function mostrarUltimosProductos(productos) {
 
             const cantidad =
                 Number(producto.cantidad) || 0;
-
 
             return `
 
@@ -327,5 +265,4 @@ function mostrarUltimosProductos(productos) {
             `;
 
         }).join("");
-
 }

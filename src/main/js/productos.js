@@ -11,11 +11,7 @@ const tablaProductos = document.getElementById("tablaProductos");
 const buscadorInput = document.getElementById("buscadorProductos");
 const filtroCategoriaSelect = document.getElementById("filtroCategoria");
 
-
-// ========================================
 // INICIALIZACIÓN
-// ========================================
-
 document.addEventListener("DOMContentLoaded", function () {
 
     if (tablaProductos) {
@@ -31,11 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
-// ========================================
 // OBTENER PRODUCTOS
-// ========================================
-
 async function cargarProductosDesdeServidor() {
 
     try {
@@ -49,7 +41,7 @@ async function cargarProductosDesdeServidor() {
                 throw new Error("API no disponible");
             }
         } catch (errApi) {
-            // Fallback a LocalStorage para GitHub Pages y VS Code
+
             const local = localStorage.getItem("inventario_productos");
             if (local) {
                 productosMemoria = JSON.parse(local);
@@ -91,11 +83,7 @@ async function cargarProductosDesdeServidor() {
     }
 }
 
-
-// ========================================
 // BUSCAR Y FILTRAR
-// ========================================
-
 function aplicarFiltros() {
 
     const termino = buscadorInput
@@ -129,11 +117,7 @@ function aplicarFiltros() {
     actualizarValorTotalStock(filtrados);
 }
 
-
-// ========================================
 // RENDERIZAR TABLA
-// ========================================
-
 function renderizarTabla(lista) {
 
     if (!tablaProductos) {
@@ -141,7 +125,6 @@ function renderizarTabla(lista) {
     }
 
     tablaProductos.innerHTML = "";
-
 
     if (!lista || lista.length === 0) {
 
@@ -245,11 +228,7 @@ function renderizarTabla(lista) {
     });
 }
 
-
-// ========================================
 // BOTONES DE LA TABLA
-// ========================================
-
 document.addEventListener("click", async function (evento) {
 
     const btnEliminar =
@@ -259,10 +238,7 @@ document.addEventListener("click", async function (evento) {
         evento.target.closest(".btn-editar");
 
 
-    // ------------------------------------
     // ELIMINAR
-    // ------------------------------------
-
     if (btnEliminar) {
 
         const codigo =
@@ -274,11 +250,9 @@ document.addEventListener("click", async function (evento) {
             `el producto con código "${codigo}"?`
         );
 
-
         if (!confirmar) {
             return;
         }
-
 
         try {
 
@@ -318,11 +292,7 @@ document.addEventListener("click", async function (evento) {
         }
     }
 
-
-    // ------------------------------------
     // EDITAR
-    // ------------------------------------
-
     if (btnEditar) {
 
         const codigo =
@@ -336,16 +306,12 @@ document.addEventListener("click", async function (evento) {
 });
 
 
-// ========================================
 // ESTADÍSTICAS
-// ========================================
-
 function actualizarEstadisticas(productosArray) {
 
     if (!productosArray) {
         return;
     }
-
 
     const totalProductos =
         productosArray.length;
@@ -366,48 +332,36 @@ function actualizarEstadisticas(productosArray) {
 
         }).length;
 
-
     const elTotal =
         document.getElementById("total-productos");
-
 
     const elDisponibles =
         document.getElementById("total-disponibles");
 
-
     const elAgotados =
         document.getElementById("total-agotados");
-
 
     if (elTotal) {
         elTotal.textContent = totalProductos;
     }
 
-
     if (elDisponibles) {
         elDisponibles.textContent = disponibles;
     }
-
 
     if (elAgotados) {
         elAgotados.textContent = agotados;
     }
 
-
     actualizarValorTotalStock(productosArray);
 }
 
-
-// ========================================
 // VALOR TOTAL DEL INVENTARIO
-// ========================================
-
 function actualizarValorTotalStock(productosArray) {
 
     if (!productosArray) {
         return;
     }
-
 
     const valorTotal =
         productosArray.reduce(

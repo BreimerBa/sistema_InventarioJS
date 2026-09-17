@@ -9,18 +9,15 @@ const ROOT = path.resolve(__dirname, '../../../');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Permite acceder a archivos estáticos
 // como CSS, JavaScript, imágenes, etc.
 app.use(express.static(ROOT));
 
-// =====================================================
 // CONEXIÓN MYSQL
-// =====================================================
 
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: '1234',
     database: 'inventario_web'
 });
 
@@ -33,9 +30,7 @@ db.connect((err) => {
     console.log('¡Conectado a MySQL exitosamente!');
 });
 
-// =====================================================
 // RUTAS DE NAVEGACIÓN
-// =====================================================
 
 // Página principal
 app.get('/', (req, res) => {
@@ -70,10 +65,7 @@ app.get('/registro', (req, res) => {
     );
 });
 
-// =====================================================
 // API - PRODUCTOS
-// =====================================================
-
 // 1. Obtener todos los productos
 app.get('/api/productos', (req, res) => {
 
@@ -97,10 +89,7 @@ app.get('/api/productos', (req, res) => {
     });
 });
 
-// =====================================================
 // 2. Buscar producto por código
-// =====================================================
-
 app.get('/api/productos/:codigo', (req, res) => {
 
     const { codigo } = req.params;
@@ -132,10 +121,7 @@ app.get('/api/productos/:codigo', (req, res) => {
     });
 });
 
-// =====================================================
 // 3. Registrar producto
-// =====================================================
-
 app.post('/api/productos', (req, res) => {
 
     const {
@@ -190,10 +176,7 @@ app.post('/api/productos', (req, res) => {
     );
 });
 
-// =====================================================
 // 4. Actualizar producto
-// =====================================================
-
 app.put('/api/productos/:codigo', (req, res) => {
 
     const { codigo } = req.params;
@@ -246,10 +229,7 @@ app.put('/api/productos/:codigo', (req, res) => {
     );
 });
 
-// =====================================================
 // 5. Eliminar producto
-// =====================================================
-
 app.delete('/api/productos/:codigo', (req, res) => {
 
     const { codigo } = req.params;
@@ -279,8 +259,5 @@ app.delete('/api/productos/:codigo', (req, res) => {
     });
 });
 
-// =====================================================
 // EXPORTAR APP
-// =====================================================
-
 module.exports = app;

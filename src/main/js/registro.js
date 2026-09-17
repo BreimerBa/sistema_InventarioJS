@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // =====================================================
     // ELEMENTOS DEL FORMULARIO
     // =====================================================
 
@@ -21,10 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formulario.querySelector('button[type="submit"]');
 
 
-    // =====================================================
     // DETECTAR SI ESTAMOS EDITANDO
-    // =====================================================
-
     const parametros = new URLSearchParams(
         window.location.search
     );
@@ -33,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let modoEdicion = false;
 
-
     if (codigoEditar) {
 
         modoEdicion = true;
@@ -41,11 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cargarProductoParaEditar(codigoEditar);
     }
 
-
-    // =====================================================
     // CARGAR PRODUCTO
-    // =====================================================
-
     async function cargarProductoParaEditar(codigo) {
 
         try {
@@ -85,11 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 datos
             );
 
-
-            // ==========================================
             // RELLENAR FORMULARIO
-            // ==========================================
-
             campoCodigo.value =
                 datos.codigo || "";
 
@@ -105,11 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             campoCantidad.value =
                 datos.cantidad ?? "";
 
-
-            // ==========================================
             // BLOQUEAR CÓDIGO EN EDICIÓN Y AJUSTAR UI
-            // ==========================================
-
             campoCodigo.readOnly = true;
 
             const avisoCodigo = document.getElementById("avisoCodigoEdicion");
@@ -124,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const descPag = document.getElementById("descPaginaRegistro");
             if (descPag) descPag.textContent = "Modifica los datos del producto seleccionado.";
 
-            // Cambiar texto del botón
             if (botonGuardar) {
                 botonGuardar.innerHTML =
                     '<i class="bi bi-check-lg me-1"></i>Guardar cambios';
@@ -145,22 +127,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-    // =====================================================
     // GUARDAR / ACTUALIZAR
-    // =====================================================
-
     formulario.addEventListener(
         "submit",
         async (evento) => {
 
             evento.preventDefault();
 
-
-            // ==========================================
             // OBTENER DATOS
-            // ==========================================
-
             const producto = {
 
                 codigo:
@@ -180,10 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             };
 
-
-            // ==========================================
             // VALIDACIONES
-            // ==========================================
 
             if (!producto.codigo) {
 
@@ -194,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-
             if (!producto.nombre) {
 
                 alert(
@@ -204,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-
             if (!producto.categoria) {
 
                 alert(
@@ -213,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 return;
             }
-
 
             if (
                 Number.isNaN(producto.precio) ||
@@ -241,14 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // ==========================================
             // DECIDIR POST O PUT
-            // ==========================================
 
-            // ==========================================
             // GUARDAR / ACTUALIZAR
-            // ==========================================
-
             try {
 
                 let guardadoEnApi = false;
@@ -269,10 +232,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         guardadoEnApi = true;
                     }
                 } catch (errApi) {
-                    // Si no hay API (ej. GitHub Pages o VS Code sin servidor), continúa a LocalStorage
                 }
 
-                // Sincronizar / guardar siempre en LocalStorage
                 let lista = JSON.parse(localStorage.getItem("inventario_productos") || "[]");
                 if (modoEdicion) {
                     const idx = lista.findIndex(
@@ -299,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         : "Producto registrado correctamente."
                 );
 
-                // Volver a la lista de productos con ruta relativa
                 window.location.href = "./productos.html";
 
             } catch (error) {
