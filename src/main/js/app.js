@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const ROOT_PROJECT = path.resolve(__dirname, '../../../');
 const pool = require('./config/database');
 
 const app = express();
@@ -23,8 +22,8 @@ app.get('/registro', (req, res) => res.sendFile(path.join(ROOT, 'src', 'main', '
 // 1. Obtener todos los productos
 app.get('/api/productos', async (req, res) => {
     try {
-        const [resultados] = await pool.query('SELECT * FROM productos ORDER BY id DESC');
-        res.json(resultados);
+        const resultado = await pool.query('SELECT * FROM productos ORDER BY id DESC');
+        res.json(resultado.rows);
     } catch (err) {
         console.error('Error al consultar productos:', err);
         res.status(500).json({ mensaje: 'Error al obtener productos' });
@@ -35,12 +34,12 @@ app.get('/api/productos', async (req, res) => {
 app.get('/api/productos/:codigo', async (req, res) => {
     try {
         const { codigo } = req.params;
-        const [resultados] = await pool.query('SELECT * FROM productos WHERE codigo = ?', [codigo]);
+        const resultado = await pool.query('SELECT * FROM productos WHERE codigo = $1', [codigo]);
 
-        if (resultados.length === 0) {
+        if (resultado.rows.length === 0) {
             return res.status(404).json({ mensaje: 'Producto no encontrado' });
         }
-        res.json(resultados[0]);
+        res.json(resultado.rows[0]);
     } catch (err) {
         console.error('Error al buscar producto:', err);
         res.status(500).json({ mensaje: 'Error en el servidor' });
@@ -51,10 +50,10 @@ app.get('/api/productos/:codigo', async (req, res) => {
 app.post('/api/productos', async (req, res) => {
     try {
         const { codigo, nombre, categoria, precio, cantidad } = req.body;
-        const sql = `INSERT INTO productos (codigo, nombre, categoria, precio, cantidad) VALUES (?, ?, ?, ?, ?)`;
-        const [resultado] = await pool.query(sql, [codigo, nombre, categoria, precio, cantidad]);
+        const sql = `INSERT INTO productos (codigo, nombre, categoria, precio, cantidad) VALUES ($1, $2, $3, $4, $5) RETURNING id`;
+        const resultado = await pool.query(sql, [codigo, nombre, categoria, precio, cantidad]);
 
-        res.json({ mensaje: '¡Producto registrado con éxito!', id: resultado.insertId });
+        res.json({ mensaje: '¡Producto registrado con éxito!', id: resultado.rows[0].id });
     } catch (err) {
         console.error('Error al registrar producto:', err);
         res.status(500).json({ mensaje: 'No se pudo registrar el producto' });
@@ -66,7 +65,7 @@ app.put('/api/productos/:codigo', async (req, res) => {
     try {
         const { codigo } = req.params;
         const { nombre, categoria, precio, cantidad } = req.body;
-        const sql = `UPDATE productos SET nombre = ?, categoria = ?, precio = ?, cantidad = ? WHERE codigo = ?`;
+        const sql = `UPDATE productos SET nombre = $1, categoria = $2, precio = $3, cantidad = $4 WHERE codigo = $5`;
 
         await pool.query(sql, [nombre, categoria, precio, cantidad, codigo]);
         res.json({ mensaje: 'Producto actualizado correctamente' });
@@ -80,7 +79,7 @@ app.put('/api/productos/:codigo', async (req, res) => {
 app.delete('/api/productos/:codigo', async (req, res) => {
     try {
         const { codigo } = req.params;
-        await pool.query('DELETE FROM productos WHERE codigo = ?', [codigo]);
+        await pool.query('DELETE FROM productos WHERE codigo = $1', [codigo]);
         res.json({ mensaje: 'Producto eliminado correctamente' });
     } catch (err) {
         console.error('Error al eliminar producto:', err);

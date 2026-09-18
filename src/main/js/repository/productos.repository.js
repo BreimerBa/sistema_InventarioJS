@@ -2,34 +2,30 @@ const db = require("../config/database");
 
 // Obtener todos los productos
 async function obtenerTodos() {
-
-    const [resultados] = await db.query(
+    const resultado = await db.query(
         "SELECT * FROM productos ORDER BY id DESC"
     );
 
-    return resultados;
+    return resultado.rows;
 }
-
 
 // Obtener un producto por código
 async function obtenerPorCodigo(codigo) {
-
-    const [resultados] = await db.query(
-        "SELECT * FROM productos WHERE codigo = ?",
+    const resultado = await db.query(
+        "SELECT * FROM productos WHERE codigo = $1",
         [codigo]
     );
 
-    return resultados[0] || null;
+    return resultado.rows[0] || null;
 }
-
 
 // Crear producto
 async function crear(producto) {
-
-    const [resultado] = await db.query(
+    const resultado = await db.query(
         `INSERT INTO productos
         (codigo, nombre, categoria, precio, cantidad)
-        VALUES (?, ?, ?, ?, ?)`,
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`,
         [
             producto.codigo,
             producto.nombre,
@@ -39,20 +35,19 @@ async function crear(producto) {
         ]
     );
 
-    return resultado;
+    return resultado.rows[0];
 }
-
 
 // Actualizar producto
 async function actualizar(codigo, producto) {
-
-    const [resultado] = await db.query(
+    const resultado = await db.query(
         `UPDATE productos
-         SET nombre = ?,
-             categoria = ?,
-             precio = ?,
-             cantidad = ?
-         WHERE codigo = ?`,
+         SET nombre = $1,
+             categoria = $2,
+             precio = $3,
+             cantidad = $4
+         WHERE codigo = $5
+         RETURNING *`,
         [
             producto.nombre,
             producto.categoria,
@@ -62,21 +57,18 @@ async function actualizar(codigo, producto) {
         ]
     );
 
-    return resultado;
+    return resultado.rows[0] || null;
 }
-
 
 // Eliminar producto
 async function eliminar(codigo) {
-
-    const [resultado] = await db.query(
-        "DELETE FROM productos WHERE codigo = ?",
+    const resultado = await db.query(
+        "DELETE FROM productos WHERE codigo = $1 RETURNING *",
         [codigo]
     );
 
-    return resultado;
+    return resultado.rows[0] || null;
 }
-
 
 module.exports = {
     obtenerTodos,

@@ -45,8 +45,9 @@ async function crearProductoService(datos) {
 
     const resultado = await repository.crear(producto);
 
+    // En PostgreSQL `resultado` ya contiene el objeto insertado con su `id`
     return {
-        id: resultado.insertId,
+        id: resultado.id,
         ...producto
     };
 }
