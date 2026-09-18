@@ -24,11 +24,6 @@ async function cargarEstadisticas() {
             const local = localStorage.getItem("inventario_productos");
             if (local) {
                 productos = JSON.parse(local);
-            } else {
-                productos = [
-                    { id: 1, codigo: "P001", nombre: "Teclado", categoria: "tecnologia", precio: 12000, cantidad: 5 }
-                ];
-                localStorage.setItem("inventario_productos", JSON.stringify(productos));
             }
         }
 

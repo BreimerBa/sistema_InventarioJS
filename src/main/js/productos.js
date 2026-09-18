@@ -45,11 +45,6 @@ async function cargarProductosDesdeServidor() {
             const local = localStorage.getItem("inventario_productos");
             if (local) {
                 productosMemoria = JSON.parse(local);
-            } else {
-                productosMemoria = [
-                    { id: 1, codigo: "P001", nombre: "Teclado", categoria: "tecnologia", precio: 12000, cantidad: 5 }
-                ];
-                localStorage.setItem("inventario_productos", JSON.stringify(productosMemoria));
             }
         }
 
